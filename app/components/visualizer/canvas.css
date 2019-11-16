@@ -1,0 +1,13 @@
+.canvas div:focus,
+.canvas canvas:focus {
+    outline: 0;
+}
+
+.canvas {
+    border-color: black;
+    border-width: 0 0 0 3px;
+    border-style: solid;
+    box-sizing: border-box;
+    grid-area: vis;
+    height: 100%
+}
