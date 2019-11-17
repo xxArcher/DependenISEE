@@ -1,8 +1,21 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import { network } from './network';
 
-import styles from './canvas.css';
+const StyledCanvas = styled.div`
+    border-color: black;
+    border-width: 0 0 0 3px;
+    border-style: solid;
+    box-sizing: border-box;
+    grid-area: vis;
+    height: 100%;
+
+    & div:focus,
+    canvas:focus {
+        outline: 0;
+    }
+`;
 
 export default class Canvas extends React.Component {
     componentDidUpdate() {
@@ -12,6 +25,6 @@ export default class Canvas extends React.Component {
     render() {
         const { id } = this.props;
 
-        return <div id={id} className={styles.canvas}></div>;
+        return <StyledCanvas id={id} />;
     }
 }

@@ -1,8 +1,15 @@
 import React from 'react';
+import styled from 'styled-components';
 
-import styles from './formElements.css';
+const StyledButton = styled.button`
+    line-height: 1.5em;
+    margin: 5px;
+    padding: 0 10px;
+    user-select: none;
+`;
 
 export const Button = (props) => {
     const { form, label } = props;
-    return <button form={form} className={styles.inputButton}>{label}</button>;
+
+    return <StyledButton form={form}>{label}</StyledButton>;
 }

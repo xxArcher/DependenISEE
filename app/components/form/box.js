@@ -1,9 +1,14 @@
 import React from 'react';
+import styled from 'styled-components';
 
-import styles from './formElements.css';
+const StyledBox = styled.input`
+    line-height: 1.5em;
+    margin: 5px;
+    width: 70%;
+`;
 
 export const Box = (props) => {
     const { id } = props;
 
-    return <input id={id} type="text" className={styles.inputBox} />
+    return <StyledBox id={id} type="text" />
 };

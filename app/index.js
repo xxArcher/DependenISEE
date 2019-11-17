@@ -1,11 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import styled, { createGlobalStyle } from 'styled-components';
 
-import { Box } from './components/form/box';
-import { Button } from './components/form/button';
 import Canvas from './components/visualizer/canvas';
+import SidePanel from './components/visualizer/sidePanel';
 
-import styles from './index.css';
+const GlobalStyle = createGlobalStyle`
+    html, body, #content {
+        height: 100%;
+        margin: 0;
+    }
+`;
+const StyledContent = styled.div`
+    align-items: center;
+    display: grid;
+    grid-template-columns: 30% 1fr 1fr;
+    grid-template-rows: 35% 1fr 1fr;
+    grid-template-areas: 
+            "upper vis vis"
+            "lower vis vis"
+            "lower vis vis";
+    height: 100%;
+    text-align: center;
+`;
 
 class IndexPage extends React.Component {
     constructor(props) {
@@ -28,24 +45,11 @@ class IndexPage extends React.Component {
     render() {
         const { url } = this.state;
 
-        return <React.Fragment>
-            <div className={styles.upperContent}>
-                <p className={styles.title}>Visualize a Repository's Dependencies</p>
-                <form id="getGitRepo" onSubmit={this.getRepoSubmit} className={styles.getRepoForm}>
-                    <Box id="repoUrl"/>
-                    <Button label="Visualize" form="getGitRepo"/>
-                </form>
-            </div>
-            <div className={styles.description}>
-                <p>Enter a Github repository URL and click submit. You will be greeted with a visualization of your repository's dependencies. Clicking on an individual node will allow you to visualize the following:</p>
-                <ul>
-                    <li><strong>Upgrade Path:</strong> the most suitable sequence of upgrades for the given dependency such that other dependencies do not break.</li>
-                    <li><strong>Sub-Dependencies:</strong> the dependencies not directly installed by the developer, but that are required by the developer's chosen dependencies.</li>
-                    <li><strong>Dependency Integration:</strong> the level at which the files in the repository are integrated/use the various dependencies on the project.</li>
-                </ul>
-            </div>
+        return <StyledContent>
+            <GlobalStyle />
+            <SidePanel getRepoSubmit={this.getRepoSubmit}/>
             <Canvas id="dependencyVisualizer" url={url} />
-        </React.Fragment>;
+        </StyledContent>;
     }
 }
 
