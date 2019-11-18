@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import VisualizerOptions from './options';
+import { VisualizerOptions } from './options';
 
 const StyledOverlay = styled.div`
     background-color: rgba(0,0,0,0.5);
@@ -15,10 +15,25 @@ const StyledOverlay = styled.div`
     z-index: 10;
 `;
 
-export default class Overlay extends React.Component {
-    render() {
-        return <StyledOverlay showOverlay={this.props.showOverlay}>
-            <VisualizerOptions />
-        </StyledOverlay>;
+const handleCloseFromClickOutside = (ev, toggleOverlay) => {
+    const clickX = ev.clientX;
+    const clickY = ev.clientY; 
+    if (clickX !== 0 && clickY !== 0) {
+        const optionsContainer = document.getElementById("visualizerOptions");
+        let containerRect = optionsContainer.getBoundingClientRect();
+        let clickInsideContainer = clickX > containerRect.left && clickX < containerRect.right &&
+                                    clickY > containerRect.top && clickY < containerRect.bottom;
+        !clickInsideContainer && toggleOverlay();
     }
+};
+
+export const OptionsOverlay = (props) => {
+    const { changeVisualization, currentSelection, showOverlay, toggleOverlay } = props;
+    
+    return <StyledOverlay showOverlay={showOverlay} 
+        onMouseDown={(ev) => handleCloseFromClickOutside(ev, toggleOverlay)}>
+        <VisualizerOptions changeVisualization={changeVisualization}
+            currentSelection={currentSelection}
+            id="visualizerOptions" />
+    </StyledOverlay>;
 }

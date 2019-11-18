@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { network } from './network';
-import Overlay from './overlay';
+import { OptionsOverlay } from './overlay';
 
 const StyledCanvas = styled.div`
     height: 100%;
@@ -27,11 +27,36 @@ export default class Canvas extends React.Component {
         super(props);
         
         this.state = {
+            currentSelection: null,
+            currentVisualization: "dependencies",
             newNetwork: true,
             showOverlay: false
         }
 
+        this.changeVisualization = this.changeVisualization.bind(this);
+        this.clickOnNode = this.clickOnNode.bind(this);
         this.toggleOverlay = this.toggleOverlay.bind(this);
+    }
+
+    changeSelection(selection) {
+        this.setState ({ currentSelection: selection });
+    }
+
+    changeVisualization(visualization) {
+        this.setState ({ currentVisualization: visualization, newNetwork: true, showOverlay: false });
+    }
+
+    clickOnNode(name) {
+        this.changeSelection(name);
+        this.toggleOverlay();
+    }
+    
+    componentDidUpdate(prevState) {
+        if (this.state.newNetwork) {
+            this.setState({ newNetwork: false });
+            const { currentSelection, currentVisualization } = this.state;
+            network(this.props.id, this.clickOnNode, currentSelection);
+        }
     }
 
     toggleOverlay() {
@@ -39,19 +64,15 @@ export default class Canvas extends React.Component {
         this.setState({ showOverlay: !showOverlay });
     }
     
-    componentDidUpdate() {
-        if (this.state.newNetwork) {
-            this.setState({ newNetwork: false });
-            network(this.props.id, this.toggleOverlay);
-        }
-    }
-    
     render() {
         const { id } = this.props;
-        const { showOverlay } = this.state;
+        const { showOverlay, currentSelection } = this.state;
 
         return <Visualizer>
-            <Overlay showOverlay={showOverlay} />
+            <OptionsOverlay changeVisualization={this.changeVisualization}
+                currentSelection={currentSelection}
+                showOverlay={showOverlay} 
+                toggleOverlay={this.toggleOverlay}  />
             <StyledCanvas id={id} />
         </Visualizer>;
     }

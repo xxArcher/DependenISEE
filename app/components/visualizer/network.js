@@ -1,24 +1,30 @@
 import vis from'vis-network';
 import _ from 'lodash';
 
-export const network = (canvasId, onClick) => {
-    const ids = [...Array(5).keys()];
-    const edges = [
-        [ids[0],ids[1]],
-        [ids[1],ids[2]],
-        [ids[2],ids[3]],
-        [ids[2],ids[4]],
-        [ids[0],ids[4]]
-    ];
-    const data = { nodes: makeNodes(ids, "Node"), edges: makeEdges(edges) };
+const mockData = require('./mockdata.json');
+const dependencies = mockData.dependencies;
+const devDependencies = mockData.devDependencies;
+
+const getTopLevelDependencies = () => {
+    return [... _.keys(dependencies), ... _.keys(devDependencies)];
+}
+
+const getDependenciesFor = (dependency) => {
+    return dependencies[dependency] || devDependencies[dependency];
+}
+
+export const network = (canvasId, onNodeClick, currentSelection) => {
+    const ids = currentSelection == null ? getTopLevelDependencies() : getDependenciesFor(currentSelection);
+
+    let data = { nodes: makeNodes(ids, "Node"), edges: new vis.DataSet({}) };
     const options = {};
     const container = document.getElementById(canvasId);
-    const network = new vis.Network(container, data, options);
+    let network = new vis.Network(container, data, options);
     network.on ('click', (ev) => {
         const nodes = ev.nodes;
         if (nodes.length != 0) {
             const clickedNode = nodes[0];
-            onClick();
+            onNodeClick(clickedNode);
         }
     });
 };
@@ -32,12 +38,11 @@ const makeEdges = (edgeLabels) => {
     return edges;
 };
 
-const makeNodes = (ids, prefix) => {
+const makeNodes = (ids) => {
     const options = {};
     let nodes = new vis.DataSet(options);
     _.forEach(ids, (val) => {
-        const label = prefix + " " + val;
-        nodes.add([{ id: val, label }]);
+        nodes.add([{ id: val, label: val }]);
     });
     return nodes;
 };
