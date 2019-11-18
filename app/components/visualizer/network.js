@@ -42,7 +42,7 @@ const makeNodes = (ids) => {
     const options = {};
     let nodes = new vis.DataSet(options);
     _.forEach(ids, (val) => {
-        nodes.add([{ id: val, label: val }]);
+        nodes.add([{ id: val, label: val, shape: "circle", widthConstraint: {minimum: 50, maximum: 100} }]);
     });
     return nodes;
 };
