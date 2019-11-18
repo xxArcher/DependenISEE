@@ -1,6 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const UPGRADE = "Upgrade Path";
+const SUB_DEPS = "Sub-Dependencies";
+const USAGE = "Usage";
+
 const Options = styled.div`
     align-items: center;
     background-color: white;
@@ -63,8 +67,8 @@ export const VisualizerOptions = (props) => {
             <p>Choose a visualization for:</p>
             <p>{currentSelection}</p>
         </Header>
-        <Opt1 onClick={() => changeVisualization("upgrade path")}>Upgrade Path</Opt1>
-        <Opt2 onClick={() => changeVisualization("sub-dependencies")}>Sub-Dependencies</Opt2>
-        <Opt3 onClick={() => changeVisualization("usage")}>Usage</Opt3>
+        <Opt1 onClick={() => changeVisualization(UPGRADE)}>{UPGRADE}</Opt1>
+        <Opt2 onClick={() => changeVisualization(SUB_DEPS)}>{SUB_DEPS}</Opt2>
+        <Opt3 onClick={() => changeVisualization(USAGE)}>{USAGE}</Opt3>
     </Options>;
 }
