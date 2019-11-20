@@ -7,7 +7,7 @@ var repoPath = "https://github.com/MalcolmChen97/React-Native-SmallApps";
 const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');
-    var result = controller.readYL(repoPath);
+    var result = controller.readRepo(repoPath);
     res.end(result+'Hello World\n');
 });
 
