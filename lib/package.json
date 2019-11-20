@@ -1,0 +1,19 @@
+{
+  "name": "lib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "upgradePath.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andy Tsang",
+  "license": "ISC",
+  "dependencies": {
+    "david": "^11.0.0",
+    "express": "^4.17.1",
+    "npm-check": "^5.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.6.0"
+  }
+}
