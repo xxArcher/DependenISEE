@@ -3,17 +3,20 @@ const Octokit = require("@octokit/rest");
 const ylParser = require('parse-yarn-lock').default
 const octokit = new Octokit();
 
+var ylPath = "";
+var pkgJsonPath = "";
 var dependenciesNodes = [];
 var yldepenceiesNodes = [];
-var fileTree = {"name":"default","type":"directory","subfile":[]};
+var  fileTree = {"name":"default","type":"directory","subfile":[]};
 var a = false;
+
 exports.readPkgJson = function(path){
     //var repoPath = "https://github.com/MalcolmChen97/React-Native-SmallApps";
     var pathComponents = repoPath.split("\/");
     // for (var i=0;i<pathComponents.length;i++){
     //     console.log(pathComponents[i]);
     // }
-    octokit.repos.getContents({
+    return octokit.repos.getContents({
         owner: pathComponents[3],
         repo: pathComponents[4],
         //TODO
@@ -29,10 +32,9 @@ exports.readPkgJson = function(path){
               //console.log(node);
               dependenciesNodes.push(node);
           }
-          console.log(dependenciesNodes);
+          return dependencies;
         })
         
-    return "";
 };
 
 
@@ -42,7 +44,7 @@ exports.readYL = function(repoPath){
     // for (var i=0;i<pathComponents.length;i++){
     //     console.log(pathComponents[i]);
     // }
-    octokit.repos.getContents({
+    return octokit.repos.getContents({
         owner: pathComponents[3],
         repo: pathComponents[4],
         //TODO
@@ -77,10 +79,7 @@ exports.readYL = function(repoPath){
                //console.log(ylnode);
                yldepenceiesNodes.push(ylnode);
            }
-           for (var i=0; i<20; i++){
-               console.log(yldepenceiesNodes[i]);
-           }
-
+           return yldepenceiesNodes
         })
         
     return "";
@@ -117,13 +116,31 @@ function analyzeTree(tree){
       for(var obj of tree){
           if (obj["type"]==="tree"){
               createTreeNode(obj["path"]);
-          } else if (obj["type"]==="blob") {
-              var fileNode = analyzeFileDep(obj["path"]);
-              //AddFileNode(fileNode);
           };
       }
-      console.log(fileTree["subfile"][0]["subfile"])
-      console.log(fileTree["subfile"][1]["subfile"])
+
+      for (var obj of tree){
+          var pathSplit = obj["path"].split("\/");
+          var ext = pathSplit[pathSplit.length-1].split("\.")[1];
+        if (obj["type"]==="blob") {
+            // console.log(pathSplit[pathSplit.length-1])
+            if (ext === "js"){  
+               //Promise call: obj in the second function call may not be the same as what is is in first function
+                console.log("analyzeTree:" + obj["path"])
+                analyzeFileDep(obj["path"]).then(result =>{
+                AddFileNode(result["path"],result["node"]);
+            });
+    
+        }
+        // else if (pathSplit[pathSplit.length-1] === "package.json"){
+        //     // Do something
+        // }else if (pathSplit[pathSplit.length-1] === "yarn.lock"){
+        //    // Do something
+        // }
+        }
+      }
+    //   console.log(fileTree["subfile"][0]["subfile"])
+    //   console.log(fileTree["subfile"][1]["subfile"])
 }
 
 function createTreeNode(path){
@@ -161,12 +178,8 @@ function analyzeFileDep(path){
      var ext = path.split("\.")[1];
      var pathSplit = path.split("\/");
      var fileName = pathSplit[pathSplit.length-1];
-     if (fileName === "yarn.lock"){
-          //readYL(path);
-     } else if (fileName === "package.json"){
-          //readPkgJson(path);
-     } else if (ext === "js" ){
-        octokit.repos.getContents({
+     //console.log(path)
+     return octokit.repos.getContents({
             owner:"MalcolmChen97",
             repo: "React-Native-SmallApps",
             path: path 
@@ -183,10 +196,40 @@ function analyzeFileDep(path){
                 dependency.push(cleanDep.substring(1,cleanDep.length-1))
              }
             }
-            var node = {"name":fileName,"type":"file","dependency":dependency}
-            console.log(node);
-            return node;
-          }
-        )
-     }
+            node = {"name":fileName,"type":"file","dependency":dependency}
+            console.log("fileDep"+path)
+            return {"node":node, "path":path};
+            
+          });
+}
+
+function AddFileNode(path,fileNode){
+    console.log("looking at "+fileTree["name"])
+    console.log("current path"+path)
+    var pathSplit = path.split("\/");
+    var currentNode = fileTree
+    for (var i=0; i< pathSplit.length -1 ;i++){
+        console.log("path split looking at "+ pathSplit[i])
+        var error = 1
+        for(var j=0; j< currentNode["subfile"].length; j++){
+        
+            //console.log(currentNode["subfile"][j])
+            if (pathSplit[i] === currentNode["subfile"][j]["name"] ){
+                console.log("switching")
+                currentNode = currentNode["subfile"][j]
+                error = 0
+            }
+        }
+        if(error == 1){
+           console.log(currentNode["subfile"])
+           console.log("error message: can't find directory "+ "path")
+        }
+    } 
+
+    currentNode["subfile"].push(fileNode)
+    // console.log("pushed ")
+    console.log("")
+    console.log(currentNode["subfile"])
+    
+    return null;
 }
