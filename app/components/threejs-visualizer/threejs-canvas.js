@@ -3,6 +3,7 @@ import { Canvas } from "react-three-fiber"
 import styled from "styled-components"
 import Scene from "./scene"
 import Sphere from "./sphere"
+import Plane from "./plane"
 
 const CanvasWrapper = styled.div`
   flex-direction: column;
@@ -25,6 +26,7 @@ const ThreeJSCanvas = props => {
           penumbra={1}
           castShadow
         />
+        <Plane />
         <Sphere />
         <Scene />
       </Canvas>
