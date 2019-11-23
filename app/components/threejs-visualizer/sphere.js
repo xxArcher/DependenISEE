@@ -1,14 +1,17 @@
 import React from "react"
 import * as THREE from "three"
-import { useRef } from "react"
+import * as CANNON from 'cannon'
+import { useCannon } from './useCannon'
 import { useFrame } from "react-three-fiber"
 
-const Sphere = props => {
-  const ref = useRef()
-  useFrame(() => (ref.current.rotation.z = ref.current.rotation.y += 0.01))
+const Sphere = ({ position, radius = 1, mass = 5, ...props }) => {
+  const ref = useCannon({ mass: mass }, body => {
+    body.addShape(new CANNON.Sphere(radius))
+    body.position.set(...position)
+  })
   return (
     <mesh ref={ref} castShadow receiveShadow position={[0, 0, 0]}>
-      <sphereBufferGeometry attach='geometry' args={[5, 32, 32]} />
+      <sphereBufferGeometry attach='geometry' args={[radius, 32, 32]} />
       <meshStandardMaterial
         attach='material'
         color={new THREE.Color(0xff00ff)}

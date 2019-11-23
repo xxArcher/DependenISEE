@@ -1,7 +1,12 @@
-import React, { useRef } from 'react'
+import React from 'react'
+import * as CANNON from 'cannon'
+import { useCannon } from './useCannon'
 
-const Plane = (props) => {
-    const ref = useRef()
+const Plane = ({position}) => {
+    const ref = useCannon({mass: 0}, body => {
+        body.addShape(new CANNON.Plane())
+        body.position.set(...position)
+    })
     return (
         <mesh ref={ref} receiveShadow>
             <planeBufferGeometry attach="geometry" args={[1000, 1000]} />

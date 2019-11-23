@@ -4,7 +4,7 @@ import { useFrame } from 'react-three-fiber'
 
 const Scene = props => {
   const ref = useRef()
-  useFrame(() => (ref.current.rotation.x = ref.current.rotation.y += 0.01))
+  // useFrame(() => (ref.current.rotation.x = ref.current.rotation.y += 0.01))
   return (
     <mesh
       ref={ref}

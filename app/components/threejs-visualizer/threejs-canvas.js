@@ -1,9 +1,10 @@
-import React, { Component } from "react"
+import React from "react"
 import { Canvas } from "react-three-fiber"
 import styled from "styled-components"
 import Scene from "./scene"
 import Sphere from "./sphere"
 import Plane from "./plane"
+import { Provider } from "./useCannon"
 
 const CanvasWrapper = styled.div`
   flex-direction: column;
@@ -15,20 +16,21 @@ const ThreeJSCanvas = props => {
   return (
     <CanvasWrapper>
       <Canvas
-        // style={{ background: '#324444' }}
         camera={{ position: [0, -10, 25] }}
       >
         <ambientLight intensity={0.5} />
         <spotLight
-          intensity={0.6}
+          intensity={0.9}
           position={[30, 40, 50]}
           angle={0.2}
           penumbra={1}
           castShadow
         />
-        <Plane />
-        <Sphere />
-        <Scene />
+        <Provider>
+            <Plane position={[0,0,0]}/>
+            <Sphere position={[0,0,10]}/>
+            {/* <Sphere /> */}
+        </Provider>
       </Canvas>
     </CanvasWrapper>
   )
