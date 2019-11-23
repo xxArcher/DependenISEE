@@ -1,7 +1,7 @@
 import React from "react"
+import * as THREE from 'three'
 import { Canvas } from "react-three-fiber"
 import styled from "styled-components"
-import Scene from "./scene"
 import Sphere from "./sphere"
 import Plane from "./plane"
 import { Provider } from "./useCannon"
@@ -16,7 +16,11 @@ const ThreeJSCanvas = props => {
   return (
     <CanvasWrapper>
       <Canvas
-        camera={{ position: [0, -10, 25] }}
+        camera={{ position: [0, 0, 25] }}
+        onCreated={({ gl }) => (
+          (gl.shadowMap.enabled = true),
+          (gl.shadowMap.type = THREE.PCFSoftShadowMap)
+        )}
       >
         <ambientLight intensity={0.5} />
         <spotLight
@@ -27,9 +31,12 @@ const ThreeJSCanvas = props => {
           castShadow
         />
         <Provider>
-            <Plane position={[0,0,0]}/>
-            <Sphere position={[0,0,10]}/>
-            {/* <Sphere /> */}
+          <Plane position={[0, 0, 0]} mass={0.2}/>
+          <Sphere position={[1, 0, 10]} radius={2} mass={1}/>
+          <Sphere position={[5, 2, 10]} />
+          <Sphere position={[-5, -2, 10]} />
+          <Sphere position={[8, 0, 10]} />
+          {/* <Sphere /> */}
         </Provider>
       </Canvas>
     </CanvasWrapper>

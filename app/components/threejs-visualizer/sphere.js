@@ -2,12 +2,12 @@ import React from "react"
 import * as THREE from "three"
 import * as CANNON from 'cannon'
 import { useCannon } from './useCannon'
-import { useFrame } from "react-three-fiber"
 
 const Sphere = ({ position, radius = 1, mass = 5, ...props }) => {
   const ref = useCannon({ mass: mass }, body => {
     body.addShape(new CANNON.Sphere(radius))
     body.position.set(...position)
+    body.linearDamping = 0.5
   })
   return (
     <mesh ref={ref} castShadow receiveShadow position={[0, 0, 0]}>
