@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import Canvas from './components/visualizer/canvas';
-import ThreeJSCanvas from './components/pokemon-visualizer/threejs-canvas'
+import ThreeJSCanvas from './components/threejs-visualizer/threejs-canvas'
 import { SidePanel } from './components/visualizer/sidePanel';
 
 const GlobalStyle = createGlobalStyle`
