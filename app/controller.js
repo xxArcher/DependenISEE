@@ -1,17 +1,19 @@
 var exports = module.exports = {};
 const Octokit = require("@octokit/rest");
 const ylParser = require('parse-yarn-lock').default
-const octokit = new Octokit();
+const octokit = new Octokit({auth: "b4fe57b83dfc5b6f247f43e9f46c08c1b66e8348"});
 
 var ylPath = "";
 var pkgJsonPath = "";
+var currentRepo = ""
 var dependenciesNodes = [];
-var yldepenceiesNodes = [];
+var ylfinaldep = [];
 var  fileTree = {"name":"default","type":"directory","subfile":[]};
+exports.fileTree = fileTree;
 var a = false;
 
-exports.readPkgJson = function(path){
-    //var repoPath = "https://github.com/MalcolmChen97/React-Native-SmallApps";
+/* Read package json and return a list of dependencies */
+exports.readPkgJson = function(repoPath){
     var pathComponents = repoPath.split("\/");
     // for (var i=0;i<pathComponents.length;i++){
     //     console.log(pathComponents[i]);
@@ -20,37 +22,48 @@ exports.readPkgJson = function(path){
         owner: pathComponents[3],
         repo: pathComponents[4],
         //TODO
-        path: path
+        path: "auth/package.json"
       }).then(result => {
+
           // content will be base64 encoded
           const content = Buffer.from(result.data.content, 'base64').toString();
           var temp = JSON.parse(content)
+          dependenciesNodes = []
           var dependencies = temp["dependencies"]
           for (var i=0; i< Object.keys(dependencies).length;i++ ){
               var key = Object.keys(dependencies)[i];
               var node = { "name": key, "version": dependencies[key]}
-              //console.log(node);
               dependenciesNodes.push(node);
           }
-          return dependencies;
+          
+          var devDependencies = temp["devDependencies"]
+          for (var i=0; i< Object.keys(devDependencies).length;i++ ){
+            var key = Object.keys(devDependencies)[i];
+            var node = { "name": key, "version": devDependencies[key]}
+            dependenciesNodes.push(node);
+        }
+          console.log(dependenciesNodes)
+          return dependenciesNodes;
         })
-        
 };
 
-
+/* Read Yarn.lock file and analyze subdependencies and return a list*/
+/* readYL has to be run after readPkgJson */
 exports.readYL = function(repoPath){
     //var repoPath = "https://github.com/MalcolmChen97/React-Native-SmallApps";
     var pathComponents = repoPath.split("\/");
     // for (var i=0;i<pathComponents.length;i++){
     //     console.log(pathComponents[i]);
     // }
-    return octokit.repos.getContents({
+    console.log("pkgpath: "+pkgJsonPath);
+     return octokit.repos.getContents({
         owner: pathComponents[3],
         repo: pathComponents[4],
         //TODO
-        path: 'auth/yarn.lock' 
+        path: "auth/yarn.lock"
       }).then(result => {
           // content will be base64 encoded
+          var yldepenceiesNodes = [];
           const content = Buffer.from(result.data.content, 'base64').toString();
           var yldependencies = ylParser(content)
           // The object has two keys: "type", "object". "type" has nothing in it. 
@@ -75,28 +88,47 @@ exports.readYL = function(repoPath){
                  }
               }
                //console.log(sub_dependencyList)
-               var ylnode = { "name": key, "version": innerDependencies[key]["version"],"sub-dependencies":sub_dependencyList};
-               //console.log(ylnode);
+               var cutKey = key.substring(0,key.lastIndexOf("@"));
+               var ylnode = { "name": cutKey, "version": innerDependencies[key]["version"],"sub-dependencies":sub_dependencyList};
                yldepenceiesNodes.push(ylnode);
-           }
-           return yldepenceiesNodes
+            }
+               //console.log(ylnode);
+               //Only save sub dependencies for the second level
+               return this.readPkgJson(repoPath).then(dpNodes => {
+                 ylfinaldep = [];
+                console.log(yldepenceiesNodes.length)
+               for (var i=0; i< dpNodes.length; i++){
+                   for (var j=0; j< yldepenceiesNodes.length; j++){
+                   if ((yldepenceiesNodes[j]["name"] === dpNodes[i]["name"]) && 
+                       (yldepenceiesNodes[j]["version"] ===dpNodes[i]["version"])){
+                   ylfinaldep.push(yldepenceiesNodes[j]);
+                   console.log(yldepenceiesNodes[j])
+               }
+               }
+               }
+               return ylfinaldep
+            })
+            
+           //console.log(yldepenceiesNodes)
+           
         })
-        
-    return "";
+
 };
 
-
+/* Analyze the repo structure and create a file tree */
+/* Analyze the dependency for each js file and add it to file tree */
 exports.readRepo = function(repoPath){
-    octokit.repos.getCommit({
-        owner:"MalcolmChen97",
-        repo:"React-Native-SmallApps",
+    var pathComponents = repoPath.split("\/");
+    return octokit.repos.getCommit({
+        owner: pathComponents[3],
+        repo: pathComponents[4],
         ref: "master"
       }).then( result =>{
         //   const myjson = result.data
           const sha = result.data.sha
-          octokit.git.getTree({
-            owner:"MalcolmChen97",
-            repo:"React-Native-SmallApps",
+          return octokit.git.getTree({
+            owner: pathComponents[3],
+            repo: pathComponents[4],
             tree_sha:sha,
             recursive: 1
           }).then(result=>{
@@ -104,15 +136,20 @@ exports.readRepo = function(repoPath){
             //       console.log(obj["path"]+" "+obj["type"])
                  
             //   }
-              analyzeTree(result.data.tree);
+                return analyzeTree(result.data.tree,pathComponents[3],pathComponents[4]).then(finalresult=>{
+                  currentRepo == repoPath;  
+                  return finalresult;
+                })
+              });
+              
           })
-
-
-      })
-
 };
 
-function analyzeTree(tree){
+async function analyzeTree(tree,owner,repo){
+    var tree
+    var promiseList = []
+    return new Promise(function(resolve,reject){
+      try{
       for(var obj of tree){
           if (obj["type"]==="tree"){
               createTreeNode(obj["path"]);
@@ -127,18 +164,27 @@ function analyzeTree(tree){
             if (ext === "js"){  
                //Promise call: obj in the second function call may not be the same as what is is in first function
                 console.log("analyzeTree:" + obj["path"])
-                analyzeFileDep(obj["path"]).then(result =>{
-                AddFileNode(result["path"],result["node"]);
-            });
+                var p = new Promise(function(resolve, reject){
+                  analyzeFileDep(obj["path"],owner,repo).then(result =>{
+                  AddFileNode(result["path"],result["node"]);
+                  resolve();})})
+                promiseList.push(p);
     
         }
-        // else if (pathSplit[pathSplit.length-1] === "package.json"){
-        //     // Do something
-        // }else if (pathSplit[pathSplit.length-1] === "yarn.lock"){
-        //    // Do something
-        // }
+        else if (pathSplit[pathSplit.length-1] === "package.json"){
+            pkgJsonPath =  obj["path"]
+        }else if (pathSplit[pathSplit.length-1] === "yarn.lock"){
+            ylPath = obj["path"]
+        }
         }
       }
+      promise.all(promiseList).then(value =>{
+        resolve(fileTree);
+      });
+    }catch(error){
+      reject(fileTree)
+    }
+    });
     //   console.log(fileTree["subfile"][0]["subfile"])
     //   console.log(fileTree["subfile"][1]["subfile"])
 }
@@ -174,14 +220,14 @@ function createTreeNode(path){
        }
 }
 
-function analyzeFileDep(path){
+function analyzeFileDep(path, owner,repo){
      var ext = path.split("\.")[1];
      var pathSplit = path.split("\/");
      var fileName = pathSplit[pathSplit.length-1];
      //console.log(path)
      return octokit.repos.getContents({
-            owner:"MalcolmChen97",
-            repo: "React-Native-SmallApps",
+            owner: owner,
+            repo: repo,
             path: path 
           }).then(result => {
             const content = Buffer.from(result.data.content, 'base64').toString();
@@ -204,18 +250,18 @@ function analyzeFileDep(path){
 }
 
 function AddFileNode(path,fileNode){
-    console.log("looking at "+fileTree["name"])
-    console.log("current path"+path)
+    // console.log("looking at "+fileTree["name"])
+    // console.log("current path"+path)
     var pathSplit = path.split("\/");
     var currentNode = fileTree
     for (var i=0; i< pathSplit.length -1 ;i++){
-        console.log("path split looking at "+ pathSplit[i])
+        // console.log("path split looking at "+ pathSplit[i])
         var error = 1
         for(var j=0; j< currentNode["subfile"].length; j++){
         
             //console.log(currentNode["subfile"][j])
             if (pathSplit[i] === currentNode["subfile"][j]["name"] ){
-                console.log("switching")
+                // console.log("switching")
                 currentNode = currentNode["subfile"][j]
                 error = 0
             }
@@ -228,8 +274,8 @@ function AddFileNode(path,fileNode){
 
     currentNode["subfile"].push(fileNode)
     // console.log("pushed ")
-    console.log("")
-    console.log(currentNode["subfile"])
-    
-    return null;
+    // console.log("")
+    console.log(fileTree["subfile"][1]["subfile"])
+    return fileTree;
 }
+
