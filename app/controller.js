@@ -1,7 +1,7 @@
 var exports = module.exports = {};
 const Octokit = require("@octokit/rest");
 const ylParser = require('parse-yarn-lock').default
-const octokit = new Octokit({auth: "b4fe57b83dfc5b6f247f43e9f46c08c1b66e8348"});
+const octokit = new Octokit();
 
 var ylPath = "";
 var pkgJsonPath = "";
@@ -179,6 +179,7 @@ async function analyzeTree(tree,owner,repo){
         }
       }
       promise.all(promiseList).then(value =>{
+        console.log(fileTree["subfile"][1]["subfile"])
         resolve(fileTree);
       });
     }catch(error){
@@ -275,7 +276,7 @@ function AddFileNode(path,fileNode){
     currentNode["subfile"].push(fileNode)
     // console.log("pushed ")
     // console.log("")
-    console.log(fileTree["subfile"][1]["subfile"])
+    //console.log(fileTree["subfile"][1]["subfile"])
     return fileTree;
 }
 
