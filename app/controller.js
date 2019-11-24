@@ -1,7 +1,7 @@
 var exports = module.exports = {};
 const Octokit = require("@octokit/rest");
 const ylParser = require('parse-yarn-lock').default
-const octokit = new Octokit();
+const octokit = new Octokit({auth: "823184ee8c6175d889830c08c91a45afea1174c0"});
 
 var ylPath = "";
 var pkgJsonPath = "";
@@ -147,7 +147,6 @@ exports.readRepo = function(repoPath){
 
 async function analyzeTree(tree,owner,repo){
     var tree
-    var promiseList = []
     return new Promise(function(resolve,reject){
       try{
       for(var obj of tree){
@@ -155,7 +154,7 @@ async function analyzeTree(tree,owner,repo){
               createTreeNode(obj["path"]);
           };
       }
-
+      var promiseLit = []
       for (var obj of tree){
           var pathSplit = obj["path"].split("\/");
           var ext = pathSplit[pathSplit.length-1].split("\.")[1];
@@ -164,27 +163,26 @@ async function analyzeTree(tree,owner,repo){
             if (ext === "js"){  
                //Promise call: obj in the second function call may not be the same as what is is in first function
                 console.log("analyzeTree:" + obj["path"])
-                var p = new Promise(function(resolve, reject){
+                var a = new Promise (function(resolve,reject){
                   analyzeFileDep(obj["path"],owner,repo).then(result =>{
                   AddFileNode(result["path"],result["node"]);
-                  resolve();})})
-                promiseList.push(p);
+                  resolve(fileTree)
+                  })})
+                  promiseLit.push(a)
+                }
     
-        }
-        else if (pathSplit[pathSplit.length-1] === "package.json"){
+        } else if (pathSplit[pathSplit.length-1] === "package.json"){
             pkgJsonPath =  obj["path"]
         }else if (pathSplit[pathSplit.length-1] === "yarn.lock"){
             ylPath = obj["path"]
         }
         }
-      }
-      promise.all(promiseList).then(value =>{
-        console.log(fileTree["subfile"][1]["subfile"])
-        resolve(fileTree);
-      });
+      Promise.all(promiseLit).then(values =>{
+        resolve(values[values.length-1])
+      })
     }catch(error){
-      reject(fileTree)
-    }
+      reject(fileTree);
+  }
     });
     //   console.log(fileTree["subfile"][0]["subfile"])
     //   console.log(fileTree["subfile"][1]["subfile"])
