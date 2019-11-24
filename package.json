@@ -12,11 +12,8 @@
   "dependencies": {
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",
-    "@octokit/rest": "^16.35.0",
-    "express": "^4.17.1",
     "cannon": "^0.6.2",
     "lodash": "^4.17.15",
-    "parse-yarn-lock": "^0.28.4",
     "ramda": "^0.26.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
