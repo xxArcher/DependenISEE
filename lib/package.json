@@ -14,10 +14,12 @@
     "npm-check": "^5.9.0",
     "parse-yarn-lock": "0.28.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "nodemon app.js"
   },
   "author": "Andy Tsang",
   "license": "ISC"

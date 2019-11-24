@@ -15,9 +15,8 @@ const CanvasWrapper = styled.div`
 const ThreeJSCanvas = props => {
   const [showPlane, setShowPlane] = useState(true)
   useEffect(() => setTimeout(() => setShowPlane(false), 4000), [])
-
 const callAPI = () => {
-    fetch(`${process.env.API_URL}/testAPI`)
+    fetch(`${process.env.API_URL}/repo/readrepo`)
         .then(res => console.log(res))
 }
   return (
