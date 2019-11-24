@@ -3,8 +3,8 @@ import * as THREE from "three"
 import * as CANNON from 'cannon'
 import { useCannon } from './useCannon'
 
-const Sphere = ({ position, radius = 1, mass = 5, ...props }) => {
-  const ref = useCannon({ mass: mass }, body => {
+const Sphere = ({ position, radius = 1, mass = 5, friction = 1, ...props }) => {
+  const ref = useCannon({ mass: mass, friction: friction }, body => {
     body.addShape(new CANNON.Sphere(radius))
     body.position.set(...position)
     body.linearDamping = 0.5
