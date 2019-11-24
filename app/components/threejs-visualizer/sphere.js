@@ -14,8 +14,8 @@ const Sphere = ({ position, radius = 1, mass = 5, ...props }) => {
       <sphereBufferGeometry attach='geometry' args={[radius, 32, 32]} />
       <meshStandardMaterial
         attach='material'
-        color={new THREE.Color(0xff00ff)}
-        roughness={0.5}
+        color={new THREE.Color(0xfa00ab)}
+        roughness={0.3}
       />
     </mesh>
   )

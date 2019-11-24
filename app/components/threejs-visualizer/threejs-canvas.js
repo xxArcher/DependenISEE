@@ -1,5 +1,5 @@
-import React from "react"
-import * as THREE from 'three'
+import React, { useState, useEffect } from "react"
+import * as THREE from "three"
 import { Canvas } from "react-three-fiber"
 import styled from "styled-components"
 import Sphere from "./sphere"
@@ -13,6 +13,8 @@ const CanvasWrapper = styled.div`
   position: relative;
 `
 const ThreeJSCanvas = props => {
+  const [showPlane, setShowPlane] = useState(true)
+  useEffect(() => setTimeout(() => setShowPlane(false), 4000), [])
   return (
     <CanvasWrapper>
       <Canvas
@@ -24,18 +26,21 @@ const ThreeJSCanvas = props => {
       >
         <ambientLight intensity={0.5} />
         <spotLight
-          intensity={0.9}
-          position={[30, 40, 50]}
-          angle={0.2}
+          intensity={0.6}
+          position={[40, 40, 60]}
+          angle={0.5}
           penumbra={1}
           castShadow
         />
         <Provider>
-          <Plane position={[0, 0, 0]} mass={0.2}/>
-          <Sphere position={[1, 0, 10]} radius={2} mass={1}/>
-          <Sphere position={[5, 2, 10]} />
-          <Sphere position={[-5, -2, 10]} />
-          <Sphere position={[8, 0, 10]} />
+          <Plane position={[0, 0, -10]} mass={0} />
+          {showPlane && <Plane position={[0, 0, 0]} mass={0} />}
+          <Sphere position={[1, 0, 7]} radius={2} mass={1} />
+          <Sphere position={[5, 2, 10]} radius={1.2}/>
+          <Sphere position={[-5, -2, 12]} radius={1.3}/>
+          <Sphere position={[4, 3, 15]} radius={1.4}/>
+          <Sphere position={[8, 2, 10]} radius={2.6}/>
+          {!showPlane && <Sphere position={[3, 7, 10]} />}
           {/* <Sphere /> */}
         </Provider>
       </Canvas>
