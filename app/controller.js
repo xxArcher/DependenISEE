@@ -18,11 +18,11 @@ exports.readPkgJson = function (repoPath) {
   // for (var i=0;i<pathComponents.length;i++){
   //     console.log(pathComponents[i]);
   // }
+  console.log("path1" + pkgJsonPath)
   return octokit.repos.getContents({
     owner: pathComponents[3],
     repo: pathComponents[4],
-    //TODO
-    path: "auth/package.json"
+    path: pkgJsonPath
   }).then(result => {
 
     // content will be base64 encoded
@@ -59,8 +59,7 @@ exports.readYL = function (repoPath) {
   return octokit.repos.getContents({
     owner: pathComponents[3],
     repo: pathComponents[4],
-    //TODO
-    path: "auth/yarn.lock"
+    path: ylPath
   }).then(result => {
     // content will be base64 encoded
     var yldepenceiesNodes = [];
@@ -170,13 +169,14 @@ async function analyzeTree(tree, owner, repo) {
               })
             })
             promiseLit.push(a)
+          }else if (pathSplit[pathSplit.length - 1] === "package.json") {
+            pkgJsonPath = obj["path"]
+            console.log("======set path=====" + obj["path"])
+          } else if (pathSplit[pathSplit.length - 1] === "yarn.lock") {
+            ylPath = obj["path"]
+            console.log("======set path=====" + obj["path"])
           }
-
-        } else if (pathSplit[pathSplit.length - 1] === "package.json") {
-          pkgJsonPath = obj["path"]
-        } else if (pathSplit[pathSplit.length - 1] === "yarn.lock") {
-          ylPath = obj["path"]
-        }
+        } 
       }
       Promise.all(promiseLit).then(values => {
         resolve(values[values.length - 1])
