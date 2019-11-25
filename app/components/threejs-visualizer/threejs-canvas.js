@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react"
 import * as THREE from "three"
 import { Canvas } from "react-three-fiber"
 import styled from "styled-components"
-import Dependencies from './dependencies'
 import Sphere from "./sphere"
 import Plane from "./plane"
 import { Provider } from "./useCannon"
-import { devDependency } from "../../utils/format-results"
 
 const CanvasWrapper = styled.div`
   flex-direction: column;
@@ -14,11 +12,13 @@ const CanvasWrapper = styled.div`
   height: 100%;
   position: relative;
 `
-const ThreeJSCanvas = ({ dependencies, devDependencies, url, ...props}) => {
+const ThreeJSCanvas = props => {
   const [showPlane, setShowPlane] = useState(true)
   useEffect(() => setTimeout(() => setShowPlane(false), 4000), [])
-  const [selected, setSelected] = useState(null)
-  console.log('Selected is', selected)
+const callAPI = () => {
+    fetch(`${process.env.API_URL}/repo/readrepo`)
+        .then(res => console.log(res))
+}
   return (
     <CanvasWrapper>
       <Canvas
@@ -38,8 +38,14 @@ const ThreeJSCanvas = ({ dependencies, devDependencies, url, ...props}) => {
         />
         <Provider>
           <Plane position={[0, 0, -10]} mass={0} />
-          <Dependencies setSelected={setSelected} dependencies={dependencies}/>
-          <Dependencies setSelected={setSelected} dependencies={devDependencies}/>
+          {showPlane && <Plane position={[0, 0, 0]} mass={0} />}
+          <Sphere position={[1, 0, 7]} radius={2} mass={1} />
+          <Sphere position={[5, 2, 10]} radius={1.2}/>
+          <Sphere position={[-5, -2, 12]} radius={1.3}/>
+          <Sphere position={[4, 3, 15]} radius={1.4}/>
+          <Sphere position={[8, 2, 10]} radius={2.6}/>
+          {!showPlane && <Sphere position={[3, 7, 10]} />}
+          {/* <Sphere /> */}
         </Provider>
       </Canvas>
     </CanvasWrapper>
