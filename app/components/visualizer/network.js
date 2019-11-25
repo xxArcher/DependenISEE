@@ -15,15 +15,14 @@ const getUsage = (name) => {
     var currDir;
     var allVisited = true;
     if (repo.type === "directory") {
-        currDir = { "name": "root",
-                    "type": "directory",
-                    "subfile": [repo] };
+        currDir = repo;
         stack.push(currDir);
-        path.push(currDir);
+        path.push(currDir.name);
         while (stack.length > 0) {
 
             while (currDir.type === "directory") {
                 allVisited = true;
+            
                 for (var i = 0; i < currDir.subfile.length; i++) {
                     // console.log("currDir[subfile]: ", currDir.subfile[i].name);
                     if (currDir.subfile[i].visited === undefined) {
@@ -39,6 +38,7 @@ const getUsage = (name) => {
 
                 if (allVisited === true) {
                     // console.log("popped: ", stack.pop()); 
+                    stack.pop();
                     currDir = stack.slice(stack.length-1, stack.length);
                     currDir = currDir[0];
                     // console.log("currDir: ", currDir);
@@ -55,19 +55,19 @@ const getUsage = (name) => {
                         names.push(currDir.name);
                         // path.pop();
                         // needtoPopPath = false;
-                        console.log("path: ", path);
+                        // console.log("path: ", path);
                         var p = Array.from(path);
-                        p = p.slice(1, p.length);
+                        // p = p.slice(1, p.length);
                         paths.push(p);
                         break;
                     }
                 }
 
-                console.log("poppingfile: ",currDir);
+                // console.log("poppingfile: ",currDir);
                 stack.pop();
                 currDir = stack.slice(stack.length-1, stack.length);
                 currDir = currDir[0]; 
-                console.log("filename: ", currDir.name);
+                // console.log("filename: ", currDir.name);
                 path.pop();
 
                 // if (needtoPopPath === true) {
