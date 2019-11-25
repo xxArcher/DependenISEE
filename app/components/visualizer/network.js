@@ -15,25 +15,21 @@ const getUsage = (name) => {
     var currDir;
     var allVisited = true;
     if (repo.type === "directory") {
-        // currDir = { "name": "root",
-        //             "type": "directory",
-        //             "subfile": [repo] };
-        currDir = repo;
+        currDir = { "name": "root",
+                    "type": "directory",
+                    "subfile": [repo] };
         stack.push(currDir);
         path.push(currDir);
         while (stack.length > 0) {
-            currDir = stack.pop();
-            path.pop();
 
             while (currDir.type === "directory") {
                 allVisited = true;
-                console.log("currDir: ", currDir.name);
                 for (var i = 0; i < currDir.subfile.length; i++) {
+                    // console.log("currDir[subfile]: ", currDir.subfile[i].name);
                     if (currDir.subfile[i].visited === undefined) {
                         currDir.subfile[i].visited = "visited";
-                        stack.push(currDir);
+                        // console.log("pushing: ", currDir.subfile[i])
                         stack.push(currDir.subfile[i]);
-                        path.push(currDir.name);
                         path.push(currDir.subfile[i].name);
                         currDir = currDir.subfile[i];
                         allVisited = false;
@@ -42,31 +38,37 @@ const getUsage = (name) => {
                 }
 
                 if (allVisited === true) {
-                    currDir = stack.pop(); 
+                    // console.log("popped: ", stack.pop()); 
+                    currDir = stack.slice(stack.length-1, stack.length);
+                    currDir = currDir[0];
+                    // console.log("currDir: ", currDir);
                     path.pop();
                     break;
                 }
 
             }
 
-            if (currDir != undefined && currDir.type === "file") {
+            if (currDir != undefined && currDir.type == "file") {
                 // var needtoPopPath = true;
                 for (var j = 0; j < currDir.dependency.length; j++) {
                     if (name === currDir.dependency[j]) {
                         names.push(currDir.name);
                         // path.pop();
                         // needtoPopPath = false;
-                        // names[0] has path, paths[0]
                         console.log("path: ", path);
                         var p = Array.from(path);
+                        p = p.slice(1, p.length);
                         paths.push(p);
                         break;
                     }
                 }
 
-                // currDir = stack.pop();
-                // console.log("filename: ", currDir.name);
-                // paths.pop();
+                console.log("poppingfile: ",currDir);
+                stack.pop();
+                currDir = stack.slice(stack.length-1, stack.length);
+                currDir = currDir[0]; 
+                console.log("filename: ", currDir.name);
+                path.pop();
 
                 // if (needtoPopPath === true) {
                 //     path.pop();
@@ -205,9 +207,6 @@ export const network = (canvasId, onNodeClick, currentSelection, currentVisualiz
         usageEdges = makeUsageEdges(use);
         fin = mergeResults(use);
         fin = removeDuplicateIds(fin);
-
-        console.log("fin: ",fin);
-        console.log("edges: ", usageEdges);
         
     }
 
