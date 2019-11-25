@@ -31,8 +31,8 @@ const IndexPage = () => {
     return <StyledContent>
         <GlobalStyle />
         <SidePanel setUrl={setUrl}/>
-        {/* <Canvas id="dependencyVisualizer" url={url} /> */}
-        <ThreeJSCanvas/>
+        <Canvas id="dependencyVisualizer" url={url} />
+        {/* <ThreeJSCanvas/> */}
     </StyledContent>;
 };
 

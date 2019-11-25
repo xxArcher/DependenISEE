@@ -29,6 +29,7 @@ const getRepoUrlFromSubmit = (ev, setUrl) => {
     ev.preventDefault();
     const formElements = ev.target.elements;
     const url = formElements.namedItem("repoUrl").value;
+    console.log(url);
     setUrl(url);
 };
 
