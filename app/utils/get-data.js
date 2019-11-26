@@ -8,8 +8,9 @@ export const readrepo = async (url) => {
     }).then(res => {
         if (!res.ok) {
             return null;
+        } else {
+            return res.json()
         }
-        return res.json()
      }).then(data => {return data})
 }
 
@@ -21,7 +22,12 @@ export const readPackageJson = async (url) => {
             "Content-Type": "application/json"
         },
     }).then(res => {
-        return res.json()
+        if (!res.ok) {
+            console.log(res)
+            return null
+        } else {
+            return res.json()
+        }
      }).then(data => {return data})
 }
 
@@ -33,7 +39,12 @@ export const readYarnLock = async(url) => {
             "Content-Type": "application/json"
         },
     }).then(res => {
-        return res.json()
+        if (!res.ok) {
+            console.log(res)
+            return null
+        } else {
+            return res.json()
+        }
      }).then(data => {return data})
 }
 
@@ -45,7 +56,12 @@ export const getSizeOfPackages = async(dependencies) => {
             "Content-Type": "application/json"
         },
     }).then(res => {
-        return res.json()
+        if (!res.ok) {
+            console.log(res)
+            return null
+        } else {
+            return res.json()
+        }
      }).then(data => {return data})
 }
 
@@ -59,6 +75,7 @@ export const getUpgradeInfo = async(url) => {
     }).then(res => {
         if (!res.ok) {
             console.log(res)
+            return null
         } else {
             return res.json()
         }

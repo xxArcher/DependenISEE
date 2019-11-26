@@ -34,22 +34,30 @@ const StyledContent = styled.div`
 
 const IndexPage = () => {
   const [url, setUrl] = useState(null)
-  const [show3D, setShow3D] = useState(true)
-
-  let repoInfo
-  let packageInfo
-  let yarnlockInfo
-  let upgradeInfo
+  const [show3D, setShow3D] = useState(false)
+  const [ repoInfo, setRepoInfo] = useState(null)
+  const [ packageInfo, setPackageInfo] = useState(null)
+  const [ yarnlockInfo, setYarnlockInfo] = useState(null)
+  const [ upgradeInfo, setUpgradeInfo] = useState(null)
+  
+    let repo
+    let pack
+    let yarnlock
+    let upgrade
 
   const getData = async url => {
-    repoInfo = await readrepo(url)
+    repo = await readrepo(url)
 
-    if (repoInfo) {
-      packageInfo = await readPackageJson(url)
-      yarnlockInfo = await readYarnLock(url)
-      upgradeInfo = await getUpgradeInfo(url)
+    if (repo) {
+      pack = await readPackageJson(url)
+      yarnlock = await readYarnLock(url)
+      upgrade = await getUpgradeInfo(url)
+
+      setRepoInfo(repo)
+      setPackageInfo(pack)
+      setYarnlockInfo(yarnlock)
+      setUpgradeInfo(upgrade)
     }
-    console.log(dependency, devDependency)
   }
   useEffect(() => {
     async function getDataAsync() {
@@ -57,8 +65,6 @@ const IndexPage = () => {
     }
     if (url) getDataAsync()
   }, [url])
-
-  console.log(url)
 
   return (
     <StyledContent>
@@ -71,7 +77,7 @@ const IndexPage = () => {
           url={url}
         />
       ) : (
-        <Canvas id='dependencyVisualizer' url={url} />
+        repoInfo && yarnlockInfo && <Canvas id='dependencyVisualizer' url={url} repoInfo={repoInfo} dependencyInfo={yarnlockInfo}/>
       )}
     </StyledContent>
   )
