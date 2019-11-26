@@ -36,7 +36,7 @@ const StyledContent = styled.div`
 
 const IndexPage = () => {
   const [url, setUrl] = useState(null)
-  const [show3D, setShow3D] = useState(true)
+  const [show3D, setShow3D] = useState(false)
   const [ repoInfo, setRepoInfo] = useState(null)
   const [ packageInfo, setPackageInfo] = useState(null)
   const [ yarnlockInfo, setYarnlockInfo] = useState(null)
