@@ -5,20 +5,20 @@ import { readrepo, readPackageJson, readYarnLock, getSizeOfPackages, getUpgradeI
 
 const Plane = ({ position, mass = 0 }) => {
 
-    const getData = async () => {
-        console.log('getting data')
-        await readrepo('https://github.com/MalcolmChen97/React-Native-SmallApps');
-        await readPackageJson('https://github.com/MalcolmChen97/React-Native-SmallApps')
-        await readYarnLock('https://github.com/MalcolmChen97/React-Native-SmallApps')
-        await getUpgradeInfo('https://github.com/MalcolmChen97/React-Native-SmallApps')
-        await getSizeOfPackages(`["react", "lodash"]`)
-    }
-    useEffect(() => {
-        async function getasync() {
-            await getData()
-        }
-        getasync()
-    }, [])
+    // const getData = async () => {
+    //     console.log('getting data')
+    //     await readrepo('https://github.com/MalcolmChen97/React-Native-SmallApps');
+    //     await readPackageJson('https://github.com/MalcolmChen97/React-Native-SmallApps')
+    //     await readYarnLock('https://github.com/MalcolmChen97/React-Native-SmallApps')
+    //     await getUpgradeInfo('https://github.com/MalcolmChen97/React-Native-SmallApps')
+    //     await getSizeOfPackages(`["react", "lodash"]`)
+    // }
+    // useEffect(() => {
+    //     async function getasync() {
+    //         await getData()
+    //     }
+    //     getasync()
+    // }, [])
 
     const ref = useCannon({mass: mass}, body => {
         body.addShape(new CANNON.Plane())
