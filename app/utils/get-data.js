@@ -49,7 +49,7 @@ export const readYarnLock = async(url) => {
 }
 
 export const getSizeOfPackages = async(dependencies) => {
-    return fetch(`http://www.localhost:8000/upgradepath/size?dep=${dependencies}`, {
+    return fetch(`http://www.localhost:8000/upgradepath/size?dep=[${dependencies}]`, {
         method: 'GET',
         mode: "cors",
         headers: {

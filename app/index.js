@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import ReactDOM from "react-dom"
+import { map } from 'ramda'
 import styled, { createGlobalStyle } from "styled-components"
 
 import Canvas from "./components/visualizer/canvas"
@@ -9,7 +10,8 @@ import {
   readrepo,
   readPackageJson,
   readYarnLock,
-  getUpgradeInfo
+  getUpgradeInfo,
+  getSizeOfPackages
 } from "./utils/get-data"
 import { dependency, devDependency } from "./utils/format-results"
 
@@ -39,11 +41,14 @@ const IndexPage = () => {
   const [ packageInfo, setPackageInfo] = useState(null)
   const [ yarnlockInfo, setYarnlockInfo] = useState(null)
   const [ upgradeInfo, setUpgradeInfo] = useState(null)
+  const [ sizeInfo, setSizeInfo] = useState(null)
   
     let repo
     let pack
     let yarnlock
     let upgrade
+    let packages = []
+    let size
 
   const getData = async url => {
     repo = await readrepo(url)
@@ -52,11 +57,19 @@ const IndexPage = () => {
       pack = await readPackageJson(url)
       yarnlock = await readYarnLock(url)
       upgrade = await getUpgradeInfo(url)
-
+      if (yarnlock) {
+          map(x => packages.push("\"" + x.name +"\""), yarnlock.dependency)
+          map(x => packages.push("\"" + x.name +"\""), yarnlock.devDependency)
+      }
+      size = await getSizeOfPackages(packages)
+      setSizeInfo(size)
       setRepoInfo(repo)
       setPackageInfo(pack)
       setYarnlockInfo(yarnlock)
       setUpgradeInfo(upgrade)
+
+      console.log(sizeInfo)
+
     }
   }
   useEffect(() => {
