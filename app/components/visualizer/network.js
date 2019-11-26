@@ -9,7 +9,7 @@ const devDependencies = mockData.devDependency;
 
 const getUsage = (name) => {
     var stack = [];
-    var names = [];
+    // var names = [];
     var path = [];
     var paths = [];
     var currDir;
@@ -25,7 +25,8 @@ const getUsage = (name) => {
             
                 for (var i = 0; i < currDir.subfile.length; i++) {
                     // console.log("currDir[subfile]: ", currDir.subfile[i].name);
-                    if (currDir.subfile[i].visited === undefined) {
+                    // console.log(currDir.subfile[i].visited);
+                    if (currDir.subfile[i].visited != "visited") {
                         currDir.subfile[i].visited = "visited";
                         // console.log("pushing: ", currDir.subfile[i])
                         stack.push(currDir.subfile[i]);
@@ -52,7 +53,7 @@ const getUsage = (name) => {
                 // var needtoPopPath = true;
                 for (var j = 0; j < currDir.dependency.length; j++) {
                     if (name === currDir.dependency[j]) {
-                        names.push(currDir.name);
+                        // names.push(currDir.name);
                         // path.pop();
                         // needtoPopPath = false;
                         // console.log("path: ", path);
@@ -82,36 +83,35 @@ const getUsage = (name) => {
     // let results = { ids: names, paths: paths };
 
     // console.log(results);
-
+    unvisit(repo);
     return paths;
 }
 
-// const getUsage = (name) => {
-//     var stack = [];
-//     var names = [];
-//     var currDir;
-//     console.log("getUsage");
-//     if (repo.type === "directory") {
-//         stack.push(repo);
-//         while (stack.length > 0) {
-//             currDir = stack.pop();
-//             if (currDir.type === "directory") {
-//                 // console.log("directory: ", currDir.name);
-//                 for (var i = 0; i < currDir.subfile.length; i++) {
-//                     stack.push(currDir.subfile[i]);
-//                 }   
-//             } else if (currDir.type === "file") {
-//                 // console.log("file: ", currDir.name);
-//                 for (var j = 0; j < currDir.dependency.length; j++) {
-//                     if (name === currDir.dependency[j]) {
-//                         names.push(currDir.name);
-//                     }
-//                 } 
-//             }
-//         }
-//     }
-//     return names;
-// }
+const unvisit = (repo) => {
+    var stack = [];
+    var currDir;
+    // console.log("getUsage");
+    if (repo.type === "directory") {
+        stack.push(repo);
+        while (stack.length > 0) {
+            currDir = stack.pop();
+            currDir.visited = null;
+            if (currDir.type === "directory") {
+                // console.log("directory: ", currDir.name);
+                for (var i = 0; i < currDir.subfile.length; i++) {
+                    stack.push(currDir.subfile[i]);
+                }   
+            } else if (currDir.type === "file") {
+                // console.log("file: ", currDir.name);
+                for (var j = 0; j < currDir.dependency.length; j++) {
+                    if (name === currDir.dependency[j]) {
+                        // names.push(currDir.name);
+                    }
+                } 
+            }
+        }
+    }
+}
 
 
 const parseJs = (data) => {
