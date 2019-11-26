@@ -22,3 +22,8 @@ Front end UI layout with React.js (Aya)
 
 **Functionality**
 The idea behind the project is to get a better idea of what resides in the node_modules folder. Dependencies make up a huge part of js projects. The dependencies we add to our project, depend on other dependencies, and they depend on other dependencies (you get the idea). For the most part, we only care about the dependencies that we added and the dependencies of those dependencies (aka sub-dependencies). 
+
+We intended to visualize the upgrade information of a specific package but could not quite find a way to extract the data we needed.
+
+**Just for Fun**
+We tried another type of visualization of the dependencies where we use ThreeJS to render the dependencies. The idea behind this visualization is that each sphere will represent a dependency present in your package.json but after extracting information using your yarn.lock file. Using this information allows us to find duplicates (each color represents a unique dependency) in the yarn.lock file. Another thing about this visualization is that the size of the sphere directly corresponds to the size of the dependency in your node_modules folder.
