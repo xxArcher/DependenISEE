@@ -4,7 +4,7 @@ import Sphere from "./sphere"
 const Dependencies = ({ dependencies, setSelected, ...props }) => {
   return (
     <>
-      {dependencies.map((dependency, i) => {
+      {dependencies && dependencies.map((dependency, i) => {
         return <Sphere
           key={dependency.name + '@' + dependency.version + "_" + i}
           position={dependency.position}

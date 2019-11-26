@@ -166,7 +166,10 @@ const getDependenciesFor = (dependency) => {
 const getMainDependencies = () => {
     let ids = []
     dependencies.map(d => {
-        ids.push(d.name)
+        if (!ids.includes(d.name)) ids.push(d.name)
+    })
+    devDependencies.map(d => {
+        if (!ids.includes(d.name)) ids.push(d.name)
     })
     return ids;
 }
@@ -174,6 +177,7 @@ const getMainDependencies = () => {
 const getSubDependencies = (name) => {
     let ids = [];
     let filtered = dependencies.filter(d => d.name === name);
+    if (filtered.length < 1) filtered = devDependencies.filter(d => d.name === name);
     console.log("filtered: ", filtered);
     if (filtered[0] != undefined) {
         filtered[0]['sub-dependencies'].map(sd => {

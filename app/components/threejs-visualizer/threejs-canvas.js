@@ -6,7 +6,7 @@ import Dependencies from './dependencies'
 import Sphere from "./sphere"
 import Plane from "./plane"
 import { Provider } from "./useCannon"
-import { devDependency } from "../../utils/format-results"
+import { dependency, devDependency } from "../../utils/format-results"
 
 const CanvasWrapper = styled.div`
   flex-direction: column;
@@ -14,11 +14,15 @@ const CanvasWrapper = styled.div`
   height: 100%;
   position: relative;
 `
-const ThreeJSCanvas = ({ dependencies, devDependencies, url, ...props}) => {
+const ThreeJSCanvas = ({ yarnlockInfo, repoInfo, upgradeInfo, ...props}) => {
   const [showPlane, setShowPlane] = useState(true)
+  const [visualization, setVisualization] = useState("dependencies")
   useEffect(() => setTimeout(() => setShowPlane(false), 4000), [])
   const [selected, setSelected] = useState(null)
-  console.log('Selected is', selected)
+  const dependencies = yarnlockInfo? dependency(yarnlockInfo.dependency) : null
+  const devDependencies = yarnlockInfo? devDependency(yarnlockInfo.devDependency) : null
+
+  console.log(dependencies, devDependencies)
   return (
     <CanvasWrapper>
       <Canvas
@@ -38,8 +42,18 @@ const ThreeJSCanvas = ({ dependencies, devDependencies, url, ...props}) => {
         />
         <Provider>
           <Plane position={[0, 0, -10]} mass={0} />
-          <Dependencies setSelected={setSelected} dependencies={dependencies}/>
-          <Dependencies setSelected={setSelected} dependencies={devDependencies}/>
+          {visualization === "dependencies" &&
+          <>
+            <Dependencies setSelected={setSelected} dependencies={dependencies}/>
+            <Dependencies setSelected={setSelected} dependencies={devDependencies}/>
+          </>
+          }
+          {visualization === "sub-dependencies" &&
+          <>
+            <Dependencies setSelected={setSelected} dependencies={dependencies}/>
+            <Dependencies setSelected={setSelected} dependencies={devDependencies}/>
+          </>
+          }
         </Provider>
       </Canvas>
     </CanvasWrapper>
