@@ -34,7 +34,7 @@ const StyledContent = styled.div`
 
 const IndexPage = () => {
   const [url, setUrl] = useState(null)
-  const [show3D, setShow3D] = useState(false)
+  const [show3D, setShow3D] = useState(true)
   const [ repoInfo, setRepoInfo] = useState(null)
   const [ packageInfo, setPackageInfo] = useState(null)
   const [ yarnlockInfo, setYarnlockInfo] = useState(null)
@@ -72,9 +72,9 @@ const IndexPage = () => {
       <SidePanel setUrl={setUrl} />
       {show3D ? (
         <ThreeJSCanvas
-          dependencies={dependency}
-          devDependencies={devDependency}
-          url={url}
+          yarnlockInfo={yarnlockInfo}
+          repoInfo={repoInfo}
+          upgradeInfo={upgradeInfo}
         />
       ) : (
         repoInfo && yarnlockInfo && <Canvas id='dependencyVisualizer' url={url} repoInfo={repoInfo} dependencyInfo={yarnlockInfo}/>
