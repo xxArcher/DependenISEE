@@ -3,9 +3,9 @@ import _ from 'lodash';
 
 const mockData = require('./mockdata2.json');
 const mockData3 = require('./mockdata3.json');
-const repo = mockData3;
-const dependencies = mockData.dependency;
-const devDependencies = mockData.devDependency;
+let repo;
+let dependencies;
+let devDependencies;
 
 const getUsage = (name) => {
     var stack = [];
@@ -183,10 +183,13 @@ const getSubDependencies = (name) => {
     return ids;
 }
 
-export const network = (canvasId, onNodeClick, currentSelection, currentVisualization) => {
+export const network = (canvasId, onNodeClick, currentSelection, currentVisualization, repoInfo, depenencyInfo) => {
     // const ids = currentSelection == null ? getTopLevelDependencies() : getDependenciesFor(currentSelection);
     let sd, use, fin, usageEdges;
-    console.log(currentSelection);
+    console.log('Inside the network function');
+    repo = repoInfo
+    dependencies = depenencyInfo.dependency;
+    devDependencies = depenencyInfo.devDependency;
     if (currentVisualization === "Sub-Dependencies") {
         sd = currentSelection == null ? getMainDependencies() : getSubDependencies(currentSelection);
     } else if (currentVisualization === "Usage") {

@@ -24,7 +24,7 @@ const formatData = (data) => {
         radius: 2,
         "sub-dependencies": data["sub-dependencies"],
         position: [getRandomInt(-10, 10), getRandomInt(-10, 10), getRandomInt(0, 10)],
-        color: generateColorForString(data.name),
+        color: generateColorForString(data.name + "@" + data.version),
         upgrade: formatUpgradeInfo(data, mockData2)
     }
 }

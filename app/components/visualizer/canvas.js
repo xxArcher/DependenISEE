@@ -57,10 +57,12 @@ export default class Canvas extends React.Component {
     }
 
     changeSelection(selection) {
+        console.log('change selection', selection)
         this.setState ({ currentSelection: selection });
     }
 
     changeVisualization(visualization) {
+        console.log('changing visualization', visualization)
         this.setState ({ currentVisualization: visualization, newNetwork: true, showOverlay: false });
     }
 
@@ -70,12 +72,19 @@ export default class Canvas extends React.Component {
     }
     
     componentDidUpdate(prevProps) {
-        if (this.state.newNetwork || prevProps.url != this.props.url) {
+        if (this.state.newNetwork) {
             this.setState({ newNetwork: false });
             const { currentSelection } = this.state;
             const { currentVisualization } = this.state;
-            network(this.props.id, this.clickOnNode, currentSelection, currentVisualization);
+            network(this.props.id, this.clickOnNode, currentSelection, currentVisualization, this.props.repoInfo, this.props.dependencyInfo);
         }
+    }
+
+    componentDidMount() {
+        this.setState({ newNetwork: false });
+        const { currentSelection } = this.state;
+        const { currentVisualization } = this.state;
+        network(this.props.id, this.clickOnNode, currentSelection, currentVisualization, this.props.repoInfo, this.props.dependencyInfo);
     }
 
     resetVisualization(ev) {
@@ -92,7 +101,7 @@ export default class Canvas extends React.Component {
     }
     
     render() {
-        const { id, url } = this.props;
+        const { id } = this.props;
         const { showOverlay, currentSelection, currentVisualization } = this.state;
 
         return <Visualizer>
