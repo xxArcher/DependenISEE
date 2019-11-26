@@ -2,8 +2,8 @@ import React from 'react'
 import * as CANNON from 'cannon'
 import { useCannon } from './useCannon'
 
-const Plane = ({position}) => {
-    const ref = useCannon({mass: 0}, body => {
+const Plane = ({ position, mass = 0 }) => {
+    const ref = useCannon({mass: mass}, body => {
         body.addShape(new CANNON.Plane())
         body.position.set(...position)
     })
