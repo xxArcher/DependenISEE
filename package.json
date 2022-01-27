@@ -20,7 +20,7 @@
     "react-three-fiber": "^3.0.14",
     "react-with-gesture": "^4.0.8",
     "styled-components": "^4.4.1",
-    "three": "^0.110.0",
+    "three": "^0.137.0",
     "vis-network": "^6.4.0"
   },
   "devDependencies": {
